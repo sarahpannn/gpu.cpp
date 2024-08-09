@@ -55,7 +55,7 @@ const char *kPuzzle1 = R"(
 fn main(
   @builtin(local_invocation_id) LocalInvocationID: vec3<u32>) {
     let local_idx = LocalInvocationID.x;
-      output[local_idx] = a[local_idx] + 10;
+      // Your code here
   }
 )";
 
@@ -80,7 +80,7 @@ const char *kPuzzle2 = R"(
 fn main(
   @builtin(local_invocation_id) LocalInvocationID: vec3<u32>) {
     let local_idx = LocalInvocationID.x;
-    output[local_idx] = a[local_idx] + b[local_idx];
+    // Your code here
   }
 )";
 
@@ -105,9 +105,7 @@ const char *kPuzzle3 = R"(
 fn main(
   @builtin(local_invocation_id) LocalInvocationID: vec3<u32>) {
     let local_idx = LocalInvocationID.x;
-    if (local_idx < arrayLength(&input)) {
-      output[local_idx] = input[local_idx] + 10;
-    }
+    // Your code here
   }
 )";
 void puzzle3(Context &ctx) {
@@ -138,10 +136,7 @@ fn main(
     let local_i = LocalInvocationID.x;
     let local_j = LocalInvocationID.y;
 
-    if (local_i < params.size && local_j < params.size) {
-      let idx = local_i + local_j * params.size;
-      output[idx] = input[idx] + 10;
-    }
+    // Your code here
   }
 )";
 void puzzle4(Context &ctx) {
@@ -178,9 +173,7 @@ fn main(
     let local_i = GlobalInvocationID.x;
     let local_j = GlobalInvocationID.y;
 
-    if (local_i < params.size && local_j < params.size) {
-      output[local_i + local_j * params.size] = a[local_i] + b[local_j];
-    }
+    // Your code here
   }
 )";
 void puzzle5(Context &ctx) {
@@ -213,9 +206,7 @@ fn main(
   ) {
     let idx = GlobalInvocationID.x;
 
-    if (idx < arrayLength(&a)) {
-      output[idx] = a[idx] + 10;
-    }
+    // Your code here
   }
 )";
 void puzzle6(Context &ctx) {
@@ -250,10 +241,7 @@ fn main(
     let idx_i = GlobalInvocationID.x;
     let idx_j = GlobalInvocationID.y;
 
-    if (idx_i < params.size && idx_j < params.size) {
-      let idx = idx_i + idx_j * params.size;
-      output[idx] = a[idx] + 10;
-    }
+    // Your code here
   }
 )";
 void puzzle7(Context &ctx) {
@@ -291,15 +279,7 @@ fn main(
     let idx = GlobalInvocationID.x;
     let local_idx = LocalInvocationID.x;
 
-    if (idx < arrayLength(&a)) {
-      sharedData[local_idx] = a[idx];
-    }
-
-    workgroupBarrier();
-   
-    if (idx < arrayLength(&a)) {
-      output[idx] = sharedData[local_idx] + 10;
-    }
+    // Your code here
   }
 )";
 void puzzle8(Context &ctx) {
@@ -340,21 +320,7 @@ fn main(
     let idx = GlobalInvocationID.x;
     let local_idx = LocalInvocationID.x;
 
-    if (idx < arrayLength(&a)) {
-      sharedData[local_idx] = a[idx];
-    }
-
-    workgroupBarrier();
-
-    if (idx == 0) {
-      output[idx] = sharedData[local_idx];
-    }
-    else if (idx == 1) {
-      output[idx] = sharedData[local_idx] + sharedData[local_idx - 1];
-    }
-    else {
-      output[idx] = sharedData[local_idx] + sharedData[local_idx - 1] + sharedData[local_idx - 2];
-    }
+    // Your code here
   }
 )";
 void puzzle9(Context &ctx) {
@@ -387,19 +353,7 @@ fn main(
     let idx = GlobalInvocationID.x;
     let local_idx = LocalInvocationID.x;
 
-    if (idx < arrayLength(&a)) {
-      sharedData[local_idx] = a[idx] * b[idx];
-    }
-
-    workgroupBarrier();
-
-    if (local_idx == 0) {
-      var sum = 0.0;
-      for (var i: u32 = 0u; i < arrayLength(&a); i = i + 1u) {
-        sum = sum + sharedData[i];
-      }
-      output[idx] = sum;
-    }
+    // Your code here
   }
 )";
 void puzzle10(Context &ctx) {
@@ -437,34 +391,7 @@ fn main(
     let idx = GlobalInvocationID.x;
     let local_idx = LocalInvocationID.x;
 
-    if (idx < arrayLength(&a)) {
-      shared_a[local_idx] = a[idx];   
-    }
-
-    if (local_idx < arrayLength(&b)) {
-      shared_b[local_idx] = b[local_idx];   
-    } 
-    else {
-      let local_idx2 = local_idx - arrayLength(&b);
-      let idx2 = idx - arrayLength(&b);
-      if ((idx2 + params.TPB < arrayLength(&a)) && (local_idx2 < arrayLength(&b))) {
-        shared_a[local_idx2 + params.TPB] = a[idx2 + params.TPB];
-      }
-    }
-
-    workgroupBarrier();
-
-    var acc = 0.0;
-
-    for (var i: u32 = 0u; i < arrayLength(&b); i = i + 1u) {
-      if (idx + i < arrayLength(&a)) {
-        acc = acc + shared_a[local_idx + i] * shared_b[i];
-      }
-    }
-
-    if (idx < arrayLength(&a)) {
-      output[idx] = acc;
-    }
+    // Your code here
   }
 )";
 void puzzle11(Context &ctx) {
@@ -503,30 +430,7 @@ fn main(
     let idx = GlobalInvocationID.x;
     let local_idx = LocalInvocationID.x;
 
-    if (idx < arrayLength(&a)) {
-      cache[local_idx] = a[idx];
-    }
-    else {
-      cache[local_idx] = 0.0;
-    }
-
-    workgroupBarrier();
-
-    if (local_idx % 2 == 0) {
-      cache[local_idx] = cache[local_idx] + cache[local_idx + 1];
-    }
-    workgroupBarrier();
-    if (local_idx % 4 == 0) {
-      cache[local_idx] = cache[local_idx] + cache[local_idx + 2];
-    }
-    workgroupBarrier();
-    if (local_idx % 8 == 0) {
-      cache[local_idx] = cache[local_idx] + cache[local_idx + 4];
-    }
-    workgroupBarrier();
-    if (local_idx == 0) {
-      output[idx] = cache[local_idx];
-    }
+    // Your code here
   }
 )";
 void puzzle12(Context &ctx) {
@@ -566,31 +470,7 @@ fn main(
     let local_i = LocalInvocationID.x;
     let batch = GlobalInvocationID.y;
 
-    if (i < params.size) {
-        // Copy and sync
-        cache[local_i] = a[batch * params.size + i];
-        
-    }
-
-    workgroupBarrier();
-
-
-    // Sum over each col
-    if (i < params.size) {
-      for (var k: u32 = 0u; k < 3u; k = k + 1u) {
-          let p = 1u << k;
-          if (local_i % (p * 2u) == 0u && i + p < params.size) {
-              cache[local_i] = cache[local_i] + cache[local_i + p];
-          }
-      }
-    }
-
-    workgroupBarrier();
-
-    // Each block corresponds to a different output position
-    if (local_i == 0u) {
-        output[batch] = cache[0];
-    }
+    // Your code here
 }
 )";
 void puzzle13(Context &ctx) {
@@ -641,28 +521,7 @@ fn main(
     let local_i = LocalInvocationID.x;
     let local_j = LocalInvocationID.y;
 
-    var acc: f32 = 0.0;
-
-    for (var k: u32 = 0u; k < params.size; k = k + params.TPB) {
-      if (i < params.size && k + local_i < params.size) {
-        a_shared[local_i + local_j * params.TPB] = a[j * params.size + (k + local_i)];
-      }
-      if (j < params.size && k + local_j < params.size) {
-        b_shared[local_i + local_j * params.TPB] = b[i + (k + local_j) * params.size];
-      }
-
-      workgroupBarrier();
-
-      let local_k_max = min(params.TPB, params.size - k);
-      for (var local_k: u32 = 0u; local_k < local_k_max; local_k = local_k + 1u) {
-          acc += a_shared[local_j * params.TPB + local_k] * b_shared[local_k * params.TPB + local_i];
-      }
-    }
-
-    // Copy to out
-    if (i < params.size && j < params.size) {
-        output[i + j * params.size] = acc;
-    }
+    // Your code here
     
 }
 )";
